@@ -48,12 +48,12 @@ let news = [
     return selectedNews
   }
   
-  export const addNews = async (news) => {
+  export const addNews = async (newItem) => {
     await delay(500)
     const newNews = {
       id: Math.random(),
-      title: news.title,
-      category: news.category,
+      title: newItem.title,
+      category: newItem.category,
       image: "none.jpg",
     }
     console.log(newNews);

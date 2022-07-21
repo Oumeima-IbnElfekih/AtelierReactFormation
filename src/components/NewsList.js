@@ -65,15 +65,13 @@ function NewsList() {
   };
   const handleAdd = async ()=> {
     console.log(formData);
-    try {
+   
      
      const newNews = await api.addNews(formData)
      setNews([...news,newNews])
      setCopieNews([...news,newNews])
     
-    } catch (e){
-         console.log("error")
-    }
+   
    
 }
 const deleteNews = async (id)=> {

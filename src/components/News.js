@@ -4,7 +4,7 @@ import { Button} from 'antd';
 function News(props) {
 
    
-    const [showComment, setShowComment] = useState(false);
+  const [showComment, setShowComment] = useState(false);
   return (
     <Col span={8} key={props.news.id}>
     <Card
