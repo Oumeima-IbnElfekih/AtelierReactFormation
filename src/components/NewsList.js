@@ -5,22 +5,24 @@ import News from "./News";
 
 function NewsList() {
   const [news, setNews] = useState([]);
+  const [Copienews, setCopieNews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
-
- 
-  
+  const [showForm, setShowForm] = useState(false);
   const [loadingCat, setLoadingCat] = useState(false);
   const [FilterField, setFilterField] = useState("");
-
+ 
+  const [formData, setFormData]= useState({title :"", category :""});
+ 
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
-      const res = await api.fetchNews();
-      setNews(res);
-      setLoading(false);
-    };
+        const res = await api.fetchNews();
+        setNews(res);
+        setCopieNews(res)
+        setLoading(false);
+      };
 
     fetchData();
   }, []);
@@ -38,26 +40,68 @@ function NewsList() {
   const handleSearch = () => {
     if (FilterField.length !== 0 && selectedValue.length === 0) {
      
-      const selectedNews = news.filter((n) => n.title === FilterField);
+      const selectedNews = news.filter((n) => n.title.includes(FilterField));
      
-      setNews(selectedNews);
-    } else if (selectedValue.length !== 0 && FilterField.length === 0) {
-      const selectedNews = news.filter((n) => n.category === selectedValue);
-     
-      setNews(selectedNews);
-    } else {
-      const selectedNews = news.filter(
-        (n) => n.category === selectedValue && n.title === FilterField
-      );
+      setCopieNews(selectedNews);
+      console.log('copie: ', Copienews);
       
-      setNews(selectedNews);
-    }
+    } else  if (selectedValue.length !== 0 && FilterField.length === 0) {
+      const selectedNews = news.filter((n) => n.category.includes(selectedValue));
+     
+      setCopieNews(selectedNews);
+      console.log('copie: ', Copienews);
+    } else  if(selectedValue.length !== 0 && FilterField.length !== 0 ){
+      const selectedNews = news.filter(
+        (n) => n.category.includes(selectedValue) && n.title.includes(FilterField) );
+        setCopieNews(selectedNews);
+        console.log('copie: ', Copienews);
+      }
+      else {
+           setCopieNews(news);
+      }
+      
+      
+    
   };
+  const handleAdd = async ()=> {
+    console.log(formData);
+    try {
+     
+     const newNews = await api.addNews(formData)
+     setNews([...news,newNews])
+     setCopieNews([...news,newNews])
+    
+    } catch (e){
+         console.log("error")
+    }
+   
+}
+const deleteNews = async (id)=> {
+    try {
+      console.log(id);
+      await api.deleteNews(id)
+      const newNews = Copienews.filter((n) => n.id !== id)
+      console.log('Copienews: ', Copienews);
+      console.log('newNews: ', newNews);
+      setCopieNews(newNews);
+       
+     } catch (e){
+          console.log("error")
+     }
  
+}
   return (
     <>
       <h1>News List</h1>
-
+      <button onClick={()=>setShowForm(!showForm)}>Add News </button>
+      {showForm ? <>
+      
+       <h1>Add a new News </h1>
+       title : <input type="text" name="title" value={formData.title} onChange={(e)=> setFormData({...formData , title : e.target.value} ) }/>
+       category : <input type="text" name="title" value={formData.category} onChange={(e)=> setFormData({...formData , category : e.target.value} ) }/>
+       <button onClick={handleAdd}>Validate </button>
+      
+      </> : <></>}
       {loading && <p> loading data , please wait ....</p>}
       {!loadingCat && (
         <>
@@ -88,9 +132,9 @@ function NewsList() {
         <Row gutter={16}>
           {!loading && (
             <>
-              {news.map((n) => {
+              {Copienews.map((n) => {
                 return (
-                  <News news={n}/>
+                  <News news={n} deleteNews={deleteNews}/>
                 );
                 
               })}

@@ -3,12 +3,12 @@ import { Card, Col,  } from "antd";
 import { Button} from 'antd';
 function News(props) {
 
-    const [New, setNew] = useState(props.news) ;
+   
     const [showComment, setShowComment] = useState(false);
   return (
-    <Col span={8} key={New.id}>
+    <Col span={8} key={props.news.id}>
     <Card
-      title={New.title}
+      title={props.news.title}
       // extra={<a href="#">More</a>}
       style={{
         width: 300,
@@ -20,11 +20,11 @@ function News(props) {
         />
       }
     >
-        
+          <button onClick={()=>props.deleteNews(props.news.id)}>Delete News </button>
          <Button type="primary" onClick={()=>setShowComment(!showComment)}>
       Show Comments 
       </Button> 
-      {showComment &&  New.comments ? ( New.comments.map((comment) => {return <p key={comment.id}>{comment.text}</p>}) ) : <p> no comments</p> }
+      {showComment &&  props.news.comments ? ( props.news.comments.map((comment) => {return <p key={comment.id}>{comment.text}</p>}) ) : <p> no comments</p> }
       
       
        </Card>
